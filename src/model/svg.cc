@@ -1,6 +1,18 @@
 
 #include "model/svg.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "model/circle.h"
+#include "model/color.h"
+#include "model/line.h"
+#include "model/rectangle.h"
+#include "model/polygon.h"
+#include "model/spline.h"
+#include "model/style.h"
+#include "model/text.h"
+
 using std::string;
 
 namespace chart_model {

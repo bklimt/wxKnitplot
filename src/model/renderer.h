@@ -2,15 +2,15 @@
 #ifndef __MODEL_RENDERER_H__
 #define __MODEL_RENDERER_H__
 
-#include "model/circle.h"
-#include "model/line.h"
-#include "model/polygon.h"
-#include "model/rectangle.h"
-#include "model/spline.h"
-#include "model/style.h"
-#include "model/text.h"
-
 namespace chart_model {
+
+class Circle;
+class Line;
+class Polygon;
+class Rectangle;
+class Spline;
+class Style;
+class Text;
 
 class Renderer {
  public:

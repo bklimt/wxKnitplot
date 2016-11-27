@@ -3,9 +3,10 @@
 
 #include <wx/wx.h>
 
+#include "gui/menu_builder.h"
 #include "model/library.h"
 
-class Knitplot: public wxApp {
+class Knitplot: public wxApp, MenuBuilder {
  public:
   void SetupMenus(wxMenuBar *menu_bar);
   

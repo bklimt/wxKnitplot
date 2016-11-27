@@ -1,6 +1,15 @@
 
 #include "gui/wx_renderer.h"
 
+#include "model/circle.h"
+#include "model/color.h"
+#include "model/line.h"
+#include "model/rectangle.h"
+#include "model/polygon.h"
+#include "model/spline.h"
+#include "model/style.h"
+#include "model/text.h"
+
 inline int rnd(double d) {
   return static_cast<int>(d + 0.5);
 }

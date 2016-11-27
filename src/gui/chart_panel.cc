@@ -16,7 +16,7 @@ const int ChartPanel::kMenuSaveAs = wxID_SAVEAS;
 const int ChartPanel::kMenuExportSVG = 1;
 const int ChartPanel::kMenuClose = wxID_CLOSE;
 
-ChartPanel::ChartPanel(Knitplot *app, const chart_model::Chart &chart,
+ChartPanel::ChartPanel(MenuBuilder *app, const chart_model::Chart &chart,
                        const wxString &title)
     : wxFrame((wxFrame*)NULL, wxID_ANY, title),
       chart_(chart) {

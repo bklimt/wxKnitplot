@@ -1,235 +1,90 @@
+all: ../bin/cli/proto2json ../bin/cli/chart2svg ../bin/gui/knitplot
 
-DEBUG =
+../obj/storage/chart.pb: storage/chart.proto
+	protoc -I=. --cpp_out=. $< && mkdir -p ../obj/storage && touch $@
 
-GFLAGS = ../lib/gflags
-PROTOBUF = ../lib/proto
+storage/chart.pb.h: ../obj/storage/chart.pb
 
-GFLAGS_CFLAGS = -I$(GFLAGS)/include
-GFLAGS_LIBS = -L$(GFLAGS)/lib -lgflags -lpthread
+storage/chart.pb.cc: ../obj/storage/chart.pb
 
-PROTOBUF_CFLAGS = -I$(PROTOBUF)/include
-PROTOBUF_LIBS = -L$(PROTOBUF)/lib -lprotobuf
+../obj/model/library.o: model/library.cc model/library.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-WX_CFLAGS = `../lib/wx/bin/wx-config --cxxflags`
-WX_LIBS = `../lib/wx/bin/wx-config --libs`
+../obj/gui/chart_panel.o: gui/chart_panel.cc gui/preview_panel.h model/chart.h model/color.h model/listener.h model/chart_parser.h model/chart_listener.h gui/library_panel.h model/point.h model/style.h gui/menu_builder.h model/shape.h model/shape_base.h model/library.h gui/chart_panel.h storage/chart.pb.h model/graphic.h
+	mkdir -p ../obj/gui && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-COMPILE = g++ $(DEBUG) -Wall -c -I.
-LINK = g++ $(DEBUG)
+../obj/model/point.o: model/point.cc model/point.h model/listener.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-all: ../bin/proto2json ../bin/chart2svg ../bin/Knitplot.app
+../obj/model/line.o: model/line.cc model/color.h model/listener.h model/point.h model/line.h model/style.h model/renderer.h model/shape_base.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-clean:
-	#
-	# Cleaning up binaries...
-	#
-	-rm ../bin/proto2json
-	-rm ../bin/chart2svg
-	-rm ../bin/knitplot
-	-rm -rf ../bin/Knitplot.app
-	#
-	# Cleaning up object files...
-	#
-	-rm ../obj/*.o
-	#
-	# Cleaning up the protocol buffer files...
-	#
-	-rm ../obj/chart.pb
-	-rm storage/chart.pb.h
-	-rm storage/chart.pb.cc
+../obj/model/chart_parser.o: model/chart_parser.cc model/chart_parser.h model/library.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-# chart.proto
+../obj/cli/proto2json.o: cli/proto2json.cc storage/chart.pb.h
+	mkdir -p ../obj/cli && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-../obj/chart.pb: storage/chart.proto
-	$(PROTOBUF)/bin/protoc -I=. --cpp_out=. $< && touch $@
-storage/chart.pb.h: ../obj/chart.pb
-storage/chart.pb.cc: ../obj/chart.pb
+../bin/cli/proto2json: ../obj/cli/proto2json.o ../obj/storage/chart.pb.o
+	mkdir -p ../bin/cli && c++ -o $@ $^ -lgflags -lprotobuf
 
-INCLUDE_storage_chart_pb_h = storage/chart.pb.h
+../obj/model/text.o: model/text.cc model/text.h model/color.h model/listener.h model/point.h model/style.h model/renderer.h model/shape_base.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-../obj/chart.pb.o: storage/chart.pb.cc $(INCLUDE_storage_chart_pb_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
+../obj/model/circle.o: model/circle.cc model/color.h model/listener.h model/point.h model/style.h model/renderer.h model/circle.h model/shape_base.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_listener_h = model/listener.h
+../obj/cli/chart2svg.o: cli/chart2svg.cc model/svg.h model/chart.h model/color.h model/listener.h model/chart_parser.h model/chart_listener.h model/point.h model/style.h model/renderer.h model/shape.h model/shape_base.h model/library.h storage/chart.pb.h model/graphic.h
+	mkdir -p ../obj/cli && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_color_h = model/color.h $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h)
+../bin/cli/chart2svg: ../obj/cli/chart2svg.o ../obj/model/polygon.o ../obj/model/chart.o ../obj/model/svg.o ../obj/model/chart_parser.o ../obj/model/circle.o ../obj/storage/chart.pb.o ../obj/model/shape.o ../obj/model/style.o ../obj/model/color.o ../obj/model/text.o ../obj/model/spline.o ../obj/model/rectangle.o ../obj/model/library.o ../obj/model/graphic.o ../obj/model/line.o ../obj/model/point.o
+	mkdir -p ../bin/cli && c++ -o $@ $^ -lgflags -lprotobuf
 
-INCLUDE_model_style_h = model/style.h $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) $(INCLUDE_model_color_h)
+../obj/model/graphic.o: model/graphic.cc model/color.h model/listener.h model/point.h model/style.h model/renderer.h model/shape.h model/shape_base.h model/graphic.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_point_h = model/point.h $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) 
+../obj/model/shape.o: model/shape.cc model/text.h model/color.h model/listener.h model/point.h model/style.h model/line.h model/shape.h model/spline.h model/shape_base.h model/circle.h model/polygon.h storage/chart.pb.h model/rectangle.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_shape_base_h = model/shape_base.h $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) $(INCLUDE_model_style_h)
+../obj/model/color.o: model/color.cc model/color.h model/listener.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_line_h = model/line.h $(INCLUDE_model_shape_base_h) $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) $(INCLUDE_model_point_h)
+../obj/model/anchor.o: model/anchor.cc model/point.h model/anchor.h model/listener.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_rectangle_h = model/rectangle.h $(INCLUDE_model_shape_base_h) $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) $(INCLUDE_model_point_h)
+../obj/gui/preview_panel.o: gui/preview_panel.cc gui/preview_panel.h model/chart.h model/color.h model/listener.h model/chart_parser.h model/chart_listener.h model/point.h model/style.h model/renderer.h model/shape.h gui/wx_renderer.h model/shape_base.h model/library.h storage/chart.pb.h model/graphic.h
+	mkdir -p ../obj/gui && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_circle_h = model/circle.h $(INCLUDE_model_shape_base_h) $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) $(INCLUDE_model_point_h)
+../obj/gui/library_panel.o: gui/library_panel.cc gui/preview_panel.h model/chart.h model/color.h model/listener.h model/chart_parser.h model/chart_listener.h gui/library_panel.h model/point.h model/style.h model/renderer.h model/shape.h gui/wx_renderer.h model/shape_base.h model/library.h storage/chart.pb.h model/graphic.h
+	mkdir -p ../obj/gui && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_polygon_h = model/polygon.h $(INCLUDE_model_shape_base_h) $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) $(INCLUDE_model_point_h)
+../obj/model/polygon.o: model/polygon.cc model/color.h model/listener.h model/point.h model/style.h model/renderer.h model/shape_base.h model/polygon.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_spline_h = model/spline.h $(INCLUDE_model_shape_base_h) $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) $(INCLUDE_model_point_h)
+../obj/model/svg.o: model/svg.cc model/svg.h model/text.h model/color.h model/listener.h model/point.h model/style.h model/line.h model/renderer.h model/spline.h model/circle.h model/shape_base.h model/polygon.h storage/chart.pb.h model/rectangle.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_text_h = model/text.h $(INCLUDE_model_shape_base_h) $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) $(INCLUDE_model_point_h)
+../obj/model/chart.o: model/chart.cc model/svg.h model/chart.h model/color.h model/listener.h model/chart_parser.h model/chart_listener.h model/point.h model/style.h model/renderer.h model/shape.h model/shape_base.h model/library.h storage/chart.pb.h model/graphic.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_shape_h = model/shape.h $(INCLUDE_model_shape_base_h) $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h)
+../obj/gui/knitplot.o: gui/knitplot.cc gui/preview_panel.h model/chart.h gui/knitplot.h model/listener.h model/chart_parser.h model/chart_listener.h model/color.h gui/library_panel.h model/point.h model/style.h gui/menu_builder.h model/shape.h model/shape_base.h model/library.h storage/chart.pb.h gui/chart_panel.h model/graphic.h
+	mkdir -p ../obj/gui && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-INCLUDE_model_graphic_h = model/graphic.h $(INCLUDE_storage_chart_pb_h) $(INCLUDE_model_listener_h) $(INCLUDE_model_shape_h)
+../bin/gui/knitplot: ../obj/gui/knitplot.o ../obj/model/point.o ../obj/gui/library_panel.o ../obj/model/chart.o ../obj/model/chart_parser.o ../obj/model/svg.o ../obj/model/circle.o ../obj/storage/chart.pb.o ../obj/gui/preview_panel.o ../obj/model/shape.o ../obj/model/style.o ../obj/gui/wx_renderer.o ../obj/model/color.o ../obj/model/text.o ../obj/model/spline.o ../obj/model/rectangle.o ../obj/model/library.o ../obj/model/graphic.o ../obj/gui/chart_panel.o ../obj/model/line.o ../obj/model/polygon.o
+	mkdir -p ../bin/gui && c++ -o $@ $^ -lgflags `wx-config --libs` -lprotobuf
 
-INCLUDE_model_renderer_h = model/renderer.h $(INCLUDE_model_line_h) $(INCLUDE_model_rectangle_h) $(INCLUDE_model_circle_h) $(INCLUDE_model_polygon_h) $(INCLUDE_model_spline_h) $(INCLUDE_model_style_h) $(INCLUDE_model_text_h)
+../obj/model/style.o: model/style.cc model/color.h model/style.h model/listener.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-../obj/color.o: model/color.cc $(INCLUDE_model_color_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
+../obj/gui/wx_renderer.o: gui/wx_renderer.cc model/text.h model/color.h model/listener.h model/point.h model/style.h model/line.h model/renderer.h model/spline.h gui/wx_renderer.h model/circle.h model/shape_base.h model/polygon.h storage/chart.pb.h model/rectangle.h
+	mkdir -p ../obj/gui && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-../obj/style.o: model/style.cc $(INCLUDE_model_style_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
+../obj/model/rectangle.o: model/rectangle.cc model/color.h model/listener.h model/point.h model/style.h model/renderer.h model/shape_base.h storage/chart.pb.h model/rectangle.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-../obj/point.o: model/point.cc $(INCLUDE_model_point_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
+../obj/model/spline.o: model/spline.cc model/color.h model/listener.h model/point.h model/style.h model/renderer.h model/spline.h model/shape_base.h storage/chart.pb.h
+	mkdir -p ../obj/model && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-../obj/line.o: model/line.cc $(INCLUDE_model_line.h) $(INCLUDE_model_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
+../obj/storage/chart.pb.o: storage/chart.pb.cc storage/chart.pb.h
+	mkdir -p ../obj/storage && c++ -I. -c -o $@ $< `wx-config --cxxflags`
 
-../obj/rectangle.o: model/rectangle.cc $(INCLUDE_model_rectangle.h) $(INCLUDE_model_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-../obj/circle.o: model/circle.cc $(INCLUDE_model_circle.h) $(INCLUDE_model_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-../obj/polygon.o: model/polygon.cc $(INCLUDE_model_polygon.h) $(INCLUDE_model_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-../obj/spline.o: model/spline.cc $(INCLUDE_model_spline.h) $(INCLUDE_model_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-../obj/text.o: model/text.cc $(INCLUDE_model_text.h) $(INCLUDE_model_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-../obj/shape.o: model/shape.cc $(INCLUDE_model_shape_h) $(INCLUDE_model_line_h) $(INCLUDE_model_rectangle_h) $(INCLUDE_model_circle_h) $(INCLUDE_model_polygon_h) $(INCLUDE_model_spline_h) $(INCLUDE_model_text_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-../obj/graphic.o: model/graphic.cc $(INCLUDE_model_graphic_h) $(INCLUDE_model_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-INCLUDE_model_library_h = model/library.h \
-                          $(INCLUDE_storage_chart_pb_h)
-
-INCLUDE_model_chart_parser_h = model/chart_parser.h \
-                               $(INCLUDE_storage_chart_pb_h) \
-                               $(INCLUDE_model_library_h)
-
-INCLUDE_model_chart_listener_h = model/chart_listener.h
-
-INCLUDE_model_chart_h = model/chart.h \
-                        $(INCLUDE_storage_chart_pb_h) \
-                        $(INCLUDE_model_chart_parser_h) \
-                        $(INCLUDE_model_library_h) \
-                        $(INCLUDE_model_chart_listener_h)
-
-../obj/chart_parser.o: model/chart_parser.cc \
-                       $(INCLUDE_model_chart_parser_h) \
-                       $(INCLUDE_storage_chart_pb_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-../obj/chart.o: model/chart.cc \
-                $(INCLUDE_model_chart_h) \
-                $(INCLUDE_model_svg_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-../obj/library.o: model/library.cc $(INCLUDE_model_library_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-INCLUDE_model_svg_h = model/svg.h \
-                      $(INCLUDE_model_renderer_h)
-
-../obj/svg.o: model/svg.cc $(INCLUDE_model_svg.h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS)
-
-../obj/chart2svg.o: cli/chart2svg.cc $(INCLUDE_model_chart_h) $(INCLUDE_model_svg.h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(GFLAGS_CFLAGS)
-
-../obj/proto2json.o: cli/proto2json.cc $(INCLUDE_storage_chart_pb_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(GFLAGS_CFLAGS)
-
-# wx UI
-
-INCLUDE_gui_library_panel_h = gui/library_panel.h \
-                              $(INCLUDE_model_library_h)
-
-../obj/library_panel.o: gui/library_panel.cc $(INCLUDE_gui_library_panel_h) $(INCLUDE_model_chart_h) $(INCLUDE_gui_preview_panel.h) $(INCLUDE_gui_wx_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(WX_CFLAGS)
-
-INCLUDE_gui_wx_renderer_h = gui/wx_renderer.h $(INCLUDE_model_renderer_h)
-
-../obj/wx_renderer.o: gui/wx_renderer.cc $(INCLUDE_gui_wx_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(WX_CFLAGS)
-
-INCLUDE_gui_preview_panel_h = gui/preview_panel.h \
-                              $(INCLUDE_model_chart_h) \
-                              $(INCLUDE_storage_chart_pb_h)
-
-../obj/preview_panel.o: gui/preview_panel.cc $(INCLUDE_gui_preview_panel_h) $(INCLUDE_gui_wx_renderer_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(WX_CFLAGS)
-
-INCLUDE_gui_knitplot_h = gui/knitplot.h \
-                        $(INCLUDE_model_library.h)
-
-../obj/knitplot.o: gui/knitplot.cc \
-                  $(INCLUDE_gui_knitplot_h) \
-                  $(INCLUDE_storage_chart_pb_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(GFLAGS_CFLAGS) $(WX_CFLAGS)
-
-INCLUDE_gui_chart_panel_h = gui/chart_panel.h \
-                            $(INCLUDE_gui_knitplot_h) \
-                            $(INCLUDE_gui_preview_panel_h) \
-                            $(INCLUDE_gui_library_panel_h) \
-                            $(INCLUDE_model_chart_h)
-
-../obj/chart_panel.o: gui/chart_panel.cc $(INCLUDE_gui_chart_panel_h)
-	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(WX_CFLAGS)
-
-# proto2json
-
-../bin/proto2json: ../obj/proto2json.o ../obj/chart.pb.o
-	#
-	# Linking command line chart proto -> json converter...
-	#
-	$(LINK) -o $@ $^ $(PROTOBUF_LIBS) $(GFLAGS_LIBS)
-
-# chart2svg
-
-../bin/chart2svg: ../obj/chart2svg.o ../obj/chart_parser.o ../obj/chart.pb.o ../obj/svg.o ../obj/chart.o ../obj/library.o ../obj/line.o ../obj/circle.o ../obj/shape.o ../obj/rectangle.o ../obj/polygon.o ../obj/spline.o ../obj/graphic.o ../obj/style.o ../obj/point.o ../obj/color.o ../obj/text.o
-	#
-	# Linking command line chart text -> svg converter...
-	#
-	$(LINK) -o $@ $^ $(PROTOBUF_LIBS) $(GFLAGS_LIBS)
-
-# knitplot
-
-../bin/knitplot: ../obj/knitplot.o ../obj/chart_panel.o ../obj/chart.pb.o ../obj/chart_parser.o ../obj/svg.o ../obj/preview_panel.o ../obj/chart.o ../obj/library.o ../obj/library_panel.o ../obj/wx_renderer.o ../obj/line.o ../obj/circle.o ../obj/shape.o ../obj/rectangle.o ../obj/polygon.o ../obj/spline.o ../obj/graphic.o ../obj/style.o ../obj/point.o ../obj/color.o ../obj/text.o
-
-	#
-	# Linking GUI chart editor...
-	#
-	$(LINK) -o $@ $^ $(PROTOBUF_LIBS) $(GFLAGS_LIBS) $(WX_LIBS)
-
-# Knitplot.app
-
-#YourApp.app: Info.plist YourApp version.plist InfoPlist.strings YourAppMacIcons.icns AnotherResource.txt  
-../bin/Knitplot.app: ../bin/knitplot
-	#
-	# Creating Mac OS X app bundle...
-	#
-	rm -rf ../bin/Knitplot.app
-	mkdir -p ../bin/Knitplot.app
-	mkdir -p ../bin/Knitplot.app/Contents
-	mkdir -p ../bin/Knitplot.app/Contents/MacOS
-	mkdir -p ../bin/Knitplot.app/Contents/Resources
-	mkdir -p ../bin/Knitplot.app/Contents/Resources/English.lproj
-	#cp Info.plist ../bin/Knitplot.app/Contents/
-	#cp version.plist ../bin/Knitplot.app/Contents/
-	#cp InfoPlist.strings ../bin/Knitplot.app/Contents/Resources/English.lproj/
-	echo -n 'APPL????' > ../bin/Knitplot.app/Contents/PkgInfo
-	cp ../bin/knitplot ../bin/Knitplot.app/Contents/MacOS/Knitplot
-	# cp icons.icns ../bin/Knitplot.app/Contents/Resources/
-	mkdir -p ../bin/Knitplot.app/Contents/Resources/data/
-	cp ../data/actions.txt ../bin/Knitplot.app/Contents/Resources/data/

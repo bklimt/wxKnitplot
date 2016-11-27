@@ -5,14 +5,14 @@
 #include <wx/listctrl.h>
 #include <wx/wx.h>
 
-#include "gui/knitplot.h"
 #include "gui/library_panel.h"
+#include "gui/menu_builder.h"
 #include "gui/preview_panel.h"
 #include "model/chart.h"
 
 class ChartPanel : public wxFrame, ChartListener {
  public:
-  ChartPanel(Knitplot *app, const chart_model::Chart &chart,
+  ChartPanel(MenuBuilder *app, const chart_model::Chart &chart,
              const wxString &title);
 
   void OnChartChanged();

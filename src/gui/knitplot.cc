@@ -1,14 +1,15 @@
 
-#include <fstream>
+#include "gui/knitplot.h"
 
 #include <gflags/gflags.h>
 
-#include "gui/knitplot.h"
+#include <fstream>
+
 #include "gui/chart_panel.h"
 #include "storage/chart.pb.h"
 
 // Add some symbols that aren't in wx 2.6.
-#if (wxMINOR_VERSION < 8)
+#if (wxMAJOR_VERSION < 3 && wxMINOR_VERSION < 8)
 #define wxFD_OPEN wxOPEN
 #define wxFD_FILE_MUST_EXIST wxFILE_MUST_EXIST
 #endif
@@ -17,7 +18,8 @@ DEFINE_string(default_library, "data/actions.txt",
               "default library file of actions");
 
 const int Knitplot::kMenuQuit = wxID_EXIT;
-const int Knitplot::kMenuAbout = wxID_ABOUT;;
+const int Knitplot::kMenuAbout = wxID_ABOUT;
+;
 const int Knitplot::kMenuNew = wxID_NEW;
 const int Knitplot::kMenuOpen = wxID_OPEN;
 
@@ -33,7 +35,8 @@ void Knitplot::SetupMenus(wxMenuBar *menu_bar) {
 }
 
 bool Knitplot::OnInit() {
-  google::ParseCommandLineFlags(&argc, (char***)&argv, true);
+  char **cargv = (char **)argv;
+  google::ParseCommandLineFlags(&argc, &cargv, true);
 
   // Load the default library of available actions.
   std::string error;
@@ -63,14 +66,12 @@ bool Knitplot::OnInit() {
   return TRUE;
 }
 
-void Knitplot::OnAbout(wxCommandEvent& WXUNUSED(event)) {
-  wxMessageBox(_T("This is a cool program."),
-               _T("About Chart"),
-               wxOK | wxICON_INFORMATION,
-               NULL);
+void Knitplot::OnAbout(wxCommandEvent &WXUNUSED(event)) {
+  wxMessageBox(_T("This is a cool program."), _T("About Chart"),
+               wxOK | wxICON_INFORMATION, NULL);
 }
 
-void Knitplot::OnNew(wxCommandEvent& WXUNUSED(event)) {
+void Knitplot::OnNew(wxCommandEvent &WXUNUSED(event)) {
   wxString title;
   title.Printf(_T("Untitled %d"), next_id_++);
 
@@ -79,7 +80,7 @@ void Knitplot::OnNew(wxCommandEvent& WXUNUSED(event)) {
   new_frame->Show();
 }
 
-void Knitplot::OnOpen(wxCommandEvent& WXUNUSED(event)) {
+void Knitplot::OnOpen(wxCommandEvent &WXUNUSED(event)) {
   wxFileDialog dialog(NULL, _T("Open chart..."), _T(""), _T(""), _T("*.chart"),
                       wxFD_OPEN | wxFD_FILE_MUST_EXIST);
   if (dialog.ShowModal() == wxID_OK) {
@@ -96,15 +97,13 @@ void Knitplot::OnOpen(wxCommandEvent& WXUNUSED(event)) {
   }
 }
 
-void Knitplot::OnQuit(wxCommandEvent& WXUNUSED(event)) {
-  exit(0);
-}
+void Knitplot::OnQuit(wxCommandEvent &WXUNUSED(event)) { exit(0); }
 
 BEGIN_EVENT_TABLE(Knitplot, wxApp)
-  EVT_MENU(kMenuQuit, Knitplot::OnQuit)
-  EVT_MENU(kMenuAbout, Knitplot::OnAbout)
-  EVT_MENU(kMenuNew, Knitplot::OnNew)
-  EVT_MENU(kMenuOpen, Knitplot::OnOpen)
+EVT_MENU(kMenuQuit, Knitplot::OnQuit)
+EVT_MENU(kMenuAbout, Knitplot::OnAbout)
+EVT_MENU(kMenuNew, Knitplot::OnNew)
+EVT_MENU(kMenuOpen, Knitplot::OnOpen)
 END_EVENT_TABLE()
 
 IMPLEMENT_APP(Knitplot)

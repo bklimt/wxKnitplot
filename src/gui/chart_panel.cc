@@ -4,7 +4,7 @@
 #include "gui/chart_panel.h"
 
 // Add some symbols that aren't in wx 2.6.
-#if (wxMINOR_VERSION < 8)
+#if (wxMAJOR_VERSION < 3 && wxMINOR_VERSION < 8)
 #define wxFD_SAVE wxSAVE
 #define wxFD_OVERWRITE_PROMPT wxOVERWRITE_PROMPT
 #endif

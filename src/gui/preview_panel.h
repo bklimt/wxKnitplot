@@ -4,8 +4,8 @@
 
 #include <wx/wx.h>
 
+#include "chart.pb.h"
 #include "model/chart.h"
-#include "storage/chart.pb.h"
 
 class PreviewPanel : public wxScrolledWindow, ChartListener {
  public:

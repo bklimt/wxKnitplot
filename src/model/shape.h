@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#include "model/shape_base.h"
+#include "chart.pb.h"
 #include "model/listener.h"
-#include "storage/chart.pb.h"
+#include "model/shape_base.h"
 
 namespace chart_model {
 
@@ -45,6 +45,6 @@ class Shape : public Listener<ShapeBase>,
   int text_length_;
 };
 
-} // namespace chart_model
+}  // namespace chart_model
 
 #endif

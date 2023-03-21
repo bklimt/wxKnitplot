@@ -2,10 +2,10 @@
 #ifndef __MODEL_RECTANGLE_H__
 #define __MODEL_RECTANGLE_H__
 
-#include "model/shape_base.h"
+#include "chart.pb.h"
 #include "model/listener.h"
 #include "model/point.h"
-#include "storage/chart.pb.h"
+#include "model/shape_base.h"
 
 namespace chart_model {
 
@@ -16,7 +16,7 @@ class Rectangle : public ShapeBase, public Listener<PointChangedEvent> {
   const Point &top_left() const { return top_left_; }
   double width() const { return width_; }
   double height() const { return height_; }
- 
+
   Point *mutable_top_left() { return &top_left_; }
   void set_width(double width);
   void set_height(double height);
@@ -40,7 +40,6 @@ class Rectangle : public ShapeBase, public Listener<PointChangedEvent> {
   double height_;
 };
 
-
-} // namespace chart_model
+}  // namespace chart_model
 
 #endif

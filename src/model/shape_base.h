@@ -1,9 +1,9 @@
 #ifndef __SHAPE_BASE_H__
 #define __SHAPE_BASE_H__
 
+#include "chart.pb.h"
 #include "model/listener.h"
 #include "model/style.h"
-#include "storage/chart.pb.h"
 
 namespace chart_model {
 
@@ -13,8 +13,8 @@ class ShapeBase : public Speaker<ShapeBase> {
  public:
   virtual ~ShapeBase() {}
 
-  virtual void ScaleAndTranslate(double x, double y,
-                                 double width, double height) = 0;
+  virtual void ScaleAndTranslate(double x, double y, double width,
+                                 double height) = 0;
 
   virtual bool Contains(double x, double y) const = 0;
 
@@ -29,6 +29,6 @@ class ShapeBase : public Speaker<ShapeBase> {
   ShapeBase(const ShapeBase &other) {}
 };
 
-} // namespace chart_model
+}  // namespace chart_model
 
 #endif

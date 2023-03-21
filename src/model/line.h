@@ -1,15 +1,14 @@
 #ifndef __MODEL_LINE_H__
 #define __MODEL_LINE_H__
 
-#include "model/shape_base.h"
+#include "chart.pb.h"
 #include "model/listener.h"
 #include "model/point.h"
-#include "storage/chart.pb.h"
+#include "model/shape_base.h"
 
 namespace chart_model {
 
-class Line : public ShapeBase,
-             public Listener<PointChangedEvent> {
+class Line : public ShapeBase, public Listener<PointChangedEvent> {
  public:
   Line();
 
@@ -37,6 +36,6 @@ class Line : public ShapeBase,
   Point point2_;
 };
 
-} // namespace chart_model
+}  // namespace chart_model
 
 #endif

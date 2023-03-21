@@ -4,10 +4,10 @@
 
 #include <vector>
 
-#include "model/shape_base.h"
+#include "chart.pb.h"
 #include "model/listener.h"
 #include "model/point.h"
-#include "storage/chart.pb.h"
+#include "model/shape_base.h"
 
 namespace chart_model {
 
@@ -38,9 +38,9 @@ class Spline : public ShapeBase, public Listener<PointChangedEvent> {
  private:
   Spline(const Spline &other) {}
 
-  std::vector<Point*> point_;
+  std::vector<Point *> point_;
 };
 
-} // namespace chart_model
+}  // namespace chart_model
 
 #endif

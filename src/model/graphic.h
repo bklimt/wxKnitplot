@@ -3,10 +3,10 @@
 
 #include <vector>
 
-#include "model/point.h"
+#include "chart.pb.h"
 #include "model/listener.h"
+#include "model/point.h"
 #include "model/shape.h"
-#include "storage/chart.pb.h"
 
 namespace chart_model {
 
@@ -41,7 +41,7 @@ class Graphic : public Listener<Shape>, public Speaker<Graphic> {
   void OnChanged(const Shape *shape) { NotifyChanged(this); }
 
  private:
-  std::vector<Shape*> shape_;
+  std::vector<Shape *> shape_;
   double width_;
   double height_;
 };

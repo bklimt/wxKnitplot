@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "chart.pb.h"
 #include "model/library.h"
-#include "storage/chart.pb.h"
 
 namespace chart_model {
 
@@ -25,8 +25,7 @@ class ChartParser {
  public:
   ChartParser();
 
-  void Parse(const std::string &text,
-             const Library &library,
+  void Parse(const std::string &text, const Library &library,
              chart_proto::Chart *chart);
 
   int GetMessageCount() const { return messages_.size(); }

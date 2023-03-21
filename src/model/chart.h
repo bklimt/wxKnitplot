@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
+#include "chart.pb.h"
 #include "model/chart_listener.h"
 #include "model/chart_parser.h"
 #include "model/graphic.h"
 #include "model/library.h"
-#include "storage/chart.pb.h"
 
 namespace chart_model {
 
@@ -27,17 +27,11 @@ class Chart {
 
   Chart(const Chart &other);
 
-  std::string GetText() const {
-    return text_;
-  }
+  std::string GetText() const { return text_; }
 
-  Library *GetLibrary() {
-    return &library_;
-  }
+  Library *GetLibrary() { return &library_; }
 
-  bool IsModified() const {
-    return modified_;
-  }
+  bool IsModified() const { return modified_; }
 
   int GetParserMessageCount() const { return parser_.GetMessageCount(); }
 
@@ -45,16 +39,13 @@ class Chart {
     return parser_.GetMessage(i);
   }
 
-  const ChartSelection &GetSelection() {
-    return selection_;
-  }
+  const ChartSelection &GetSelection() { return selection_; }
 
   bool ParseText(const char *text);
 
   void SelectText(int start, int length);
 
-  bool GetGraphic(double max_width, double max_height,
-                  bool show_selection,
+  bool GetGraphic(double max_width, double max_height, bool show_selection,
                   Graphic *graphic, std::string *error) const;
 
   bool LoadFromFile(const char *filename, std::string *error);
@@ -81,7 +72,7 @@ class Chart {
 
   ChartParser parser_;
 
-  std::vector<ChartListener*> listeners_;
+  std::vector<ChartListener *> listeners_;
 };
 
 }  // namespace chart_model

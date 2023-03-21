@@ -1,9 +1,9 @@
 #ifndef __MODEL_STYLE_H__
 #define __MODEL_STYLE_H__
 
+#include "chart.pb.h"
 #include "model/color.h"
 #include "model/listener.h"
-#include "storage/chart.pb.h"
 
 namespace chart_model {
 

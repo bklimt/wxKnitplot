@@ -3,15 +3,14 @@
 
 #include <string>
 
-#include "model/shape_base.h"
+#include "chart.pb.h"
 #include "model/listener.h"
 #include "model/point.h"
-#include "storage/chart.pb.h"
+#include "model/shape_base.h"
 
 namespace chart_model {
 
-class Text : public ShapeBase,
-             public Listener<PointChangedEvent> {
+class Text : public ShapeBase, public Listener<PointChangedEvent> {
  public:
   Text();
 
@@ -39,6 +38,6 @@ class Text : public ShapeBase,
   std::string text_;
 };
 
-} // namespace chart_model
+}  // namespace chart_model
 
 #endif

@@ -5,8 +5,8 @@
 
 #include <fstream>
 
+#include "chart.pb.h"
 #include "gui/chart_panel.h"
-#include "storage/chart.pb.h"
 
 // Add some symbols that aren't in wx 2.6.
 #if (wxMAJOR_VERSION < 3 && wxMINOR_VERSION < 8)

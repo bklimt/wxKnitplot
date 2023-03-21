@@ -1,13 +1,14 @@
 
-#include <cstdio>
-#include <fstream>
 #include <gflags/gflags.h>
 #include <google/protobuf/io/tokenizer.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/text_format.h>
+
+#include <cstdio>
+#include <fstream>
 #include <string>
 
-#include "storage/chart.pb.h"
+#include "chart.pb.h"
 
 using namespace std;
 
@@ -29,9 +30,7 @@ class LibraryErrorCollector : public ErrorCollector {
     error.append(message + position);
   }
 
-  std::string GetErrorMessage() {
-    return error;
-  }
+  std::string GetErrorMessage() { return error; }
 
  private:
   std::string error;
@@ -49,7 +48,7 @@ string ColorToString(chart_proto::Color color) {
   return rgb;
 }
 
-void PrintLibrary(FILE *out, chart_proto::Library& library) {
+void PrintLibrary(FILE *out, chart_proto::Library &library) {
   fprintf(out, "Library =\n");
   for (int i = 0; i < library.action_type_size(); ++i) {
     chart_proto::ActionType action = library.action_type(i);
@@ -61,9 +60,11 @@ void PrintLibrary(FILE *out, chart_proto::Library& library) {
     for (int j = 0; j < action.graphic().shape_size(); ++j) {
       chart_proto::Shape shape = action.graphic().shape(j);
       if (shape.has_rectangle()) {
-        fprintf(out, "      rectangle: { top_left: %s, width: %.2f, height: %.2f }\n",
-                PointToString(shape.rectangle().top_left()).c_str(),
-                shape.rectangle().width(), shape.rectangle().height());
+        fprintf(
+            out,
+            "      rectangle: { top_left: %s, width: %.2f, height: %.2f }\n",
+            PointToString(shape.rectangle().top_left()).c_str(),
+            shape.rectangle().width(), shape.rectangle().height());
       }
       if (shape.has_circle()) {
         fprintf(out, "      circle: { center: %s, radius: %.2f }\n",
@@ -92,8 +93,10 @@ void PrintLibrary(FILE *out, chart_proto::Library& library) {
         fprintf(out, "      ]\n");
       }
       fprintf(out, "      style:\n");
-      fprintf(out, "        fill: \"%s\"\n", ColorToString(shape.style().fill()).c_str());
-      fprintf(out, "        stroke: \"%s\"\n", ColorToString(shape.style().stroke()).c_str());
+      fprintf(out, "        fill: \"%s\"\n",
+              ColorToString(shape.style().fill()).c_str());
+      fprintf(out, "        stroke: \"%s\"\n",
+              ColorToString(shape.style().stroke()).c_str());
       fprintf(out, "        strokeWidth: %d\n", shape.style().stroke_width());
       if (j != action.graphic().shape_size() - 1) {
         fprintf(out, "    ,\n");
@@ -121,9 +124,11 @@ int main(int argc, char **argv) {
   }
 
   // Load the library of available actions.
-  std::fstream library_file(FLAGS_library.c_str(), std::ios::in | std::ios::binary);
+  std::fstream library_file(FLAGS_library.c_str(),
+                            std::ios::in | std::ios::binary);
   if (!library_file.good()) {
-    string error = (std::string)"Unable to open library at " + FLAGS_library + ".";
+    string error =
+        (std::string) "Unable to open library at " + FLAGS_library + ".";
     fprintf(stderr, "%s\n", error.c_str());
     exit(-1);
   }
@@ -144,4 +149,3 @@ int main(int argc, char **argv) {
   fclose(out);
   return 0;
 }
-

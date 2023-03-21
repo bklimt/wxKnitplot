@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "storage/chart.pb.h"
+#include "chart.pb.h"
 
 namespace chart_model {
 

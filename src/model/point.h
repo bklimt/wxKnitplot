@@ -1,8 +1,8 @@
 #ifndef __MODEL_POINT_H__
 #define __MODEL_POINT_H__
 
+#include "chart.pb.h"
 #include "model/listener.h"
-#include "storage/chart.pb.h"
 
 namespace chart_model {
 
